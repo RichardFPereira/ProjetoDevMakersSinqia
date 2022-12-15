@@ -3,7 +3,6 @@ package br.com.ada.aredesocial.rede;
 import br.com.ada.aredesocial.post.Post;
 import br.com.ada.aredesocial.usuario.Usuario;
 
-import java.sql.SQLOutput;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,10 +12,19 @@ import java.util.Scanner;
 public class Rede {
     private static Scanner input = new Scanner(System.in);
     private List<Usuario> usuarios = new ArrayList<>();
-    private Usuario usuario;
     public Usuario usuarioLogado;
 
+    private ArrayList<Post> posts = new ArrayList<>();
+
     public Rede(){
+    }
+
+    public ArrayList<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(Post post) {
+        this.posts.add(post);
     }
 
     public void boasVindas(){
@@ -57,9 +65,9 @@ public class Rede {
         String nome = input.next();
         System.out.println("Digite seu login: ");
         String login = input.next();
-        System.out.println("Digite sua senha: ");
+        System.out.println("Digite sua senha (mínimo 6 caracteres): ");
         String senha = input.next();
-        System.out.println("Confirme sua senha: ");
+        System.out.println("Confirme sua senha (mínimo 6 caracteres): ");
         String confirmarSenha = input.next();
         if (verificarCadastro(login, senha, confirmarSenha)){
             Usuario user = new Usuario(nome, login, senha);
@@ -78,12 +86,12 @@ public class Rede {
     public boolean verificarCadastro(String login, String senha, String confirmarSenha){
         for (Usuario user : usuarios) {
             if (user.getLogin().equalsIgnoreCase(login)){
-                System.out.println("O usuário já está cadastrado.");
+                System.out.println("\nEste login já está cadastrado.");
                 return false;
             }
         }
-        if (!senha.equals(confirmarSenha)) {
-            System.out.println("As senhas devem ser iguais! ");
+        if (!senha.equals(confirmarSenha) || senha.length() < 6) {
+            System.out.println("\nAs senhas devem ser iguais e ter no mínimo 6 caracteres! ");
             return false;
         } else {
             return true;
@@ -132,6 +140,12 @@ public class Rede {
         return entrada;
     }
 
+    public void criarPost(Usuario user, String data, String hora, String mensagem){
+        String usuario = user.getLogin();
+        Post novoPost = new Post(usuario, data, hora, mensagem);
+        setPosts(novoPost);
+    }
+
     public void postar(Usuario user) {
         Date dataHoraAtual = new Date();
         String data = new SimpleDateFormat("dd/MM/yyyy").format(dataHoraAtual);
@@ -139,19 +153,25 @@ public class Rede {
         input.nextLine();
         System.out.println("Digite a mensagem: ");
         String mensagem = input.nextLine();
-        user.criarPost(data, hora, mensagem);
+        criarPost(user, data, hora, mensagem);
         System.out.println("\nPOST CRIADO!");
     }
 
-    public void mostrarTimeline(Usuario user){
-        if (user.getPosts().size() != 0){
-            for (Post postagem : user.getPosts()) {
+    public void mostrarTimeLine(Usuario user){
+        List<Post> postsFiltrados = new ArrayList<>();
+        for (Post postagem : getPosts()) {
+            if (postagem.getUsuario().equalsIgnoreCase(user.getLogin())) {
+                postsFiltrados.add(postagem);
+            }
+        }
+        if ( postsFiltrados.size() != 0 ) {
+            for (Post postagem : postsFiltrados) {
                 System.out.println("\nDATA: " + postagem.getData());
                 System.out.println("HORA: " + postagem.getHora());
                 System.out.println("MENSAGEM: "+ postagem.getMensagem());
             }
         } else {
-            System.out.println("\nEste usuário não possui posts!");
+            System.out.println("Este usuário não possui posts!");
         }
     }
 }

@@ -25,4 +25,8 @@ public class Post {
     public String getMensagem() {
         return mensagem;
     }
+
+    public String getUsuario() {
+        return usuario;
+    }
 }

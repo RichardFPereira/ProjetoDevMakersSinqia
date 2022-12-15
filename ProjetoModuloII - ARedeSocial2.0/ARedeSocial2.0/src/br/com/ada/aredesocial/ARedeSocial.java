@@ -29,9 +29,8 @@ public class ARedeSocial {
                                 usuario.setLogado(false);
                             } else if (opcao == 1) {
                                 rede.postar(user);
-                                //System.out.println(user.getLogin());
                             } else {
-                                rede.mostrarTimeline(user);
+                                rede.mostrarTimeLine(user);
                             }
                         }
                     }
@@ -39,7 +38,6 @@ public class ARedeSocial {
             } else if (opcao == 2) {
                 rede.cadastrarUsuario();
             }
-            //System.out.println(rede.getUsuarios().size());
         }
         rede.despedida();
     }
